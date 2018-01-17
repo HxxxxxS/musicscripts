@@ -1,43 +1,42 @@
 #/bin/bash
 
-##  "%N" "%L" "%F" "%R" "%D" "%C" "%Z" "%T" "%I"
+importFolder="/home/user/Music/Import"
 
-importfile="/home/user/Music/Import"
+logfile="/home/user/Downloads/scripts/logs/$(date +%Y-%m)_downloads.csv"
 
-logfile="/home/user/Downloads/scripts/torrent.log"
+				## Parameters for qBittorrent
+name="$1" 		## "%N"
+category="$2"	## "%L"
+cpath="$3"		## "%F"
+rpath="$4"		## "%R"
+spath="$5"		## "%D"
+files="$6"		## "%C"
+size="$7"		## "%Z"
+tracker="$8"	## "%T"
+tHash="$9"		## "%I"
+## Todo: add tag support when implemented in qBittorrent
 
-name="$1"
-category="$2"
-cpath="$3"
-rpath="$4"
-spath="$5"
-files="$6"
-size="$7"
-tracker="$8"
-tHash="$9"
+## CSV format for logfile
+## Date, Name, Hash, Category, Size, Imported(1/0)
 
-echo "==================== | $(date) | =========================" >> $logfile
+output="$(date +%c), '$name', '$hash', '$category', '$size',"
 
-echo "Name: '$name'" >> $logfile
-echo "Category: '$category'" >> $logfile
-echo "Tracker: '$tracker'" >> $logfile
-echo "Hash: '$tHash'" >> $logfile
-
-echo "===============================================================================" >> $logfile
-
-if [ "$category" == "do not import" ]; then
-    echo "Category is 'do not import'. This torrent will not be imported." >> $logfile
+if [[ "$category" == "do not import" ]]; then
+    copy=false
 elif [[ "$category" == "old"* ]]; then
-    echo "This is an old torrent. Will not be imported" >> $logfile
-elif [ "$category" == "musikk" ]; then
-    cp "$cpath/" "$importfile/" -r
-    echo "Category is musikk. Copied to '$importfile'" >> $logfile
+    copy=false
+elif [[ "$category" == "musikk" ]]; then
+    copy=true
 elif [[ "$tracker" == *"apollo"* ]]; then
-    cp "$cpath/" "$importfile" -r
-    echo "Tracker is apollo. Copied to '$importfile'" >> $logfile
+    copy=true
 else
-	echo "This torrent was not copied to '$importfile'" >> $logfile
+    copy=false
 fi
 
-echo "" >> $logfile
+output+=copy
 
+if [ $copy == true ]; then
+	cp "$cpath/" "$importFolder/" -r
+fi
+
+echo output >> $logfile
