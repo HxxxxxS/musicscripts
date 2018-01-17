@@ -2,9 +2,9 @@
 
 ##  "%N" "%L" "%F" "%R" "%D" "%C" "%Z" "%T" "%I"
 
-importfile="/home/sophus/Music/Import"
+importfile="/home/user/Music/Import"
 
-logfile="/home/sophus/Downloads/scripts/torrent.log"
+logfile="/home/user/Downloads/scripts/torrent.log"
 
 name="$1"
 category="$2"
