@@ -1,3 +1,5 @@
+$noop(Syntax: https://picard.musicbrainz.org/docs/scripting/)
+
 $noop(If %albumartist% != [Nothing] AND %albumartist% != various
 artists -> _artist = %albumartist%)
 
