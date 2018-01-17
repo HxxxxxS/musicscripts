@@ -1,8 +1,8 @@
 #/bin/bash
 
-importFolder="~/Music/Import"
+importFolder="/home/user/Music/Import"
 
-logFile="logs/$(date +%Y-%m)_downloads.csv"
+logFile="/home/user/Downloads/scripts/logs/$(date +%Y-%m)_downloads.csv"
 
                     ## Parameters for qBittorrent
 name="$1"           ## "%N"
@@ -33,10 +33,14 @@ else
     copy=false
 fi
 
-output+=copy
+output+=$copy
 
 if [ $copy == true ]; then
     cp "$contentPath/" "$importFolder/" -r
 fi
 
-echo output >> $logFile
+if [ ! -e "$logFile" ] ; then
+    touch "$logFile"
+fi
+
+echo $output >> $logFile
