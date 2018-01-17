@@ -1,8 +1,8 @@
 #/bin/bash
 
-importFolder="/home/user/Music/Import"
+importFolder="~/Music/Import"
 
-logfile="/home/user/Downloads/scripts/logs/$(date +%Y-%m)_downloads.csv"
+logfile="~/Downloads/scripts/logs/$(date +%Y-%m)_downloads.csv"
 
 				## Parameters for qBittorrent
 name="$1" 		## "%N"
