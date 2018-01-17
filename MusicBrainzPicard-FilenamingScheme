@@ -1,0 +1,596 @@
+$noop(If %albumartist% != [Nothing] AND %albumartist% != various
+artists -> _artist = %albumartist%)
+
+$noop(If %albumartist% = [Nothing] OR %albumartist% = various artists
+-> _artist = %artist%)
+
+
+$noop($set(_artist,$if($and($ne(%albumartistsort%,),$ne($lower(%albumartistsort%),various
+artists)),%albumartistsort%,%artistsort%)))
+
+
+$set(_artist,$if($eq(%compilation%,1),%artist%,$if($ne(%artist%,),%artist%,%albumartist%)))
+
+
+$set(_albumartist,$if($and($eq(%compilation%,1),$eq($lower(%albumartist%),various
+artists)),!Various Artists,%albumartistsort%))
+
+
+$noop(_________________________________________________)
+
+
+$noop(If %_artistnamedelimiter% is in %_artist% -> _morethanoneartist = 1)
+
+$noop(If %_artistnamedelimiter% is not in %_artist% -> _morethanoneartist = 0)
+
+$noop(If there is more than one artist, we use the first only)
+
+
+$set(_artistnamedelimiter,;)
+
+$if($in(%_artist%,%_artistnamedelimiter%),$set(_morethanoneartist,1),$set(_morethanoneartist,0))
+
+$if($eq(%_morethanoneartist%,1),$set(_artist,$rsearch(%_artist%,[^%_artistnamedelimiter%]+%_artistnamedelimiter%)),)
+
+$if($eq(%_morethanoneartist%,1),$if($eq($right(%_artist%,1),%_artistnamedelimiter%),$set(_artist,$trim(%_artist%,%_artistnamedelimiter%)),),)
+
+
+$noop(_________________________________________________)
+
+
+$noop(Attention: Do not write parentheses in the Comment tag.)
+
+$noop(Use "Comment=" to write normal comments, in English please.)
+
+$noop(Separate your comments by "|".)
+
+
+$noop(In the Comments, use "NonLatinArtistInEnglish=" to write the
+English translation of an artist name typed with non-latin characters,
+for instance russian of japanese.)
+
+$noop(Use "NonLatinArtistInLatin=" to write with latin characters an
+artist name typed with non-latin characters.)
+
+$noop("NonLatinArtistInEnglish=" has priority over "NonLatinArtistInLatin=".)
+
+
+$noop(In %comment:%, copies what is after %_nonlatinartistinenglish%
+in _nonlatinartist)
+
+$noop(If %_nonlatinartist% = [Nothing] -> copies what is after
+%_nonlatinartistinlatin% in _nonlatinartist)
+
+$noop(Deletes the content after the comment delimiter)
+
+$noop(Deletes "NonLatinArtistInEnglish=" and "NonLatinArtistInLatin="
+from the content)
+
+$noop(If if the rightmost character is "|" or "_", we delete it)
+
+
+$set(_commentdelimiter,|)
+
+$set(_musicbrainzreplacementforwindowsforbiddencharacters,_)
+
+$set(_nonlatinartistinenglish,NonLatinArtistInEnglish=)
+
+$set(_nonlatinartistinlatin,NonLatinArtistInLatin=)
+
+$set(_nonlatinartist,$rsearch(%comment:%,%_nonlatinartistinenglish%[^\(\)]+))
+
+$if($eq(%_nonlatinartist%,),$set(_nonlatinartist,$rsearch(%comment:%,%_nonlatinartistinlatin%[^\(\)]+)),)
+
+$set(_nonlatinartist,$rsearch(%_nonlatinartist%,[^%_commentdelimiter%]+%_commentdelimiter%))
+
+$set(_nonlatinartist,$rreplace(%_nonlatinartist%,^%_nonlatinartistinenglish%{1},))
+
+$set(_nonlatinartist,$rreplace(%_nonlatinartist%,^%_nonlatinartistinlatin%{1},))
+
+$if($eq($right(%_nonlatinartist%,1),%_commentdelimiter%),$set(_nonlatinartist,$trim(%_nonlatinartist%,%_commentdelimiter%)),)
+
+$if($eq($right(%_nonlatinartist%,1),%_musicbrainzreplacementforwindowsforbiddencharacters%),$set(_nonlatinartist,$trim(%_nonlatinartist%,%_musicbrainzreplacementforwindowsforbiddencharacters%)),)
+
+
+$noop(_________________________________________________)
+
+
+$noop(In the Comments, use "ArtistCommentInEnglish=" to write to write
+a comment on the artist.)
+
+
+$set(_artistcommentinenglish,ArtistCommentInEnglish=)
+
+$set(_artistcomment,$rsearch(%comment:%,%_artistcommentinenglish%[^\(\)]+))
+
+$set(_artistcomment,$rsearch(%_artistcomment%,[^%_commentdelimiter%]+%_commentdelimiter%))
+
+$set(_artistcomment,$rreplace(%_artistcomment%,^%_artistcommentinenglish%{1},))
+
+$if($eq($right(%_artistcomment%,1),%_commentdelimiter%),$set(_artistcomment,$trim(%_artistcomment%,%_commentdelimiter%)),)
+
+$if($eq($right(%_artistcomment%,1),%_musicbrainzreplacementforwindowsforbiddencharacters%),$set(_artistcomment,$trim(%_artistcomment%,%_musicbrainzreplacementforwindowsforbiddencharacters%)),)
+
+
+$noop(_________________________________________________)
+
+
+$noop(Integrates the content of _nonlatinartist and _artistcomment in _artist)
+
+
+$set(_artist,%_artist%$if($ne(%_nonlatinartist%,),
+\(%_nonlatinartist%\),)$if($ne(%_artistcomment%,),
+\(%_artistcomment%\),))
+
+
+$noop(_________________________________________________)
+
+
+$noop(Prefer %originaldate% to %date% for sorting)
+
+$set(_date,$if2(%originaldate%,%date%))
+
+
+$noop(Prefer just year)
+
+$set(_date,$if($or(%originaldate%,%date%),[$left(%_date%,4)] ,))
+
+
+$noop(_________________________________________________)
+
+
+$noop(In the Comments, use "NonLatinAlbumInEnglish=" to write the
+English translation of an album name typed with non-latin characters.)
+
+$noop(Use "NonLatinAlbumInLatin=" to write with latin characters an
+album name typed with non-latin characters.)
+
+$noop("NonLatinAlbumInEnglish=" has priority over "NonLatinAlbumInLatin=".)
+
+
+$set(_nonlatinalbuminenglish,NonLatinAlbumInEnglish=)
+
+$set(_nonlatinalbuminlatin,NonLatinAlbumInLatin=)
+
+$set(_nonlatinalbum,$rsearch(%comment:%,%_nonlatinalbuminenglish%[^\(\)]+))
+
+$if($eq(%_nonlatinalbum%,),$set(_nonlatinalbum,$rsearch(%comment:%,%_nonlatinalbuminlatin%[^\(\)]+)),)
+
+$set(_nonlatinalbum,$rsearch(%_nonlatinalbum%,[^%_commentdelimiter%]+%_commentdelimiter%))
+
+$set(_nonlatinalbum,$rreplace(%_nonlatinalbum%,^%_nonlatinalbuminenglish%{1},))
+
+$set(_nonlatinalbum,$rreplace(%_nonlatinalbum%,^%_nonlatinalbuminlatin%{1},))
+
+$if($eq($right(%_nonlatinalbum%,1),%_commentdelimiter%),$set(_nonlatinalbum,$trim(%_nonlatinalbum%,%_commentdelimiter%)),)
+
+$if($eq($right(%_nonlatinalbum%,1),%_musicbrainzreplacementforwindowsforbiddencharacters%),$set(_nonlatinalbum,$trim(%_nonlatinalbum%,%_musicbrainzreplacementforwindowsforbiddencharacters%)),)
+
+
+$noop(_________________________________________________)
+
+
+$noop(In the Comments, use "AlbumCommentInEnglish=" to write to write
+a comment on the album.)
+
+
+$set(_albumcommentinenglish,AlbumCommentInEnglish=)
+
+$set(_albumcomment,$rsearch(%comment:%,%_albumcommentinenglish%[^\(\)]+))
+
+$set(_albumcomment,$rsearch(%_albumcomment%,[^%_commentdelimiter%]+%_commentdelimiter%))
+
+$set(_albumcomment,$rreplace(%_albumcomment%,^%_albumcommentinenglish%{1},))
+
+$if($eq($right(%_albumcomment%,1),%_commentdelimiter%),$set(_albumcomment,$trim(%_albumcomment%,%_commentdelimiter%)),)
+
+$if($eq($right(%_albumcomment%,1),%_musicbrainzreplacementforwindowsforbiddencharacters%),$set(_albumcomment,$trim(%_albumcomment%,%_musicbrainzreplacementforwindowsforbiddencharacters%)),)
+
+
+$noop(_________________________________________________)
+
+
+$noop(Integrates the content of _nonlatinartist and _albumcomment in _album)
+
+
+$noop($set(_album,%album%$if($gt(%totaldiscs%,1), \(Disc
+%discnumber%$if($ne(%discsubtitle%,), -
+%discsubtitle%\),\)$if($ne(%_nonlatinalbum%,),
+\(%_nonlatinalbum%\),)$if($ne(%_albumcomment%,),
+\(%_albumcomment%\),)),$if($ne(%_nonlatinalbum%,),
+\(%_nonlatinalbum%\),)$if($ne(%_albumcomment%,),
+\(%_albumcomment%\),))))
+
+
+$set(_album,$if($and(%originaldate%,%date%),$if($eq($left(%originaldate%,4),$left(%date%,4)),%album%,%album%
+ $left(%date%,4)),%album%))
+
+
+
+$noop(_________________________________________________)
+
+
+$noop(If %totaldiscs% > 1 = If there is more than one disc, write
+"Disc ? - [Disc subtitle])
+
+$noop(handle disc content separately)
+
+
+$set(_discalbum,
+
+$if(
+
+$gt(%totaldiscs%,1),
+
+Disc %discnumber%
+
+$if($ne(%discsubtitle%,), - %discsubtitle%
+
+,
+
+$if($ne(%_nonlatinalbum%,), %_nonlatinalbum%,)
+
+$if($ne(%_albumcomment%,), %_albumcomment%,)
+
+),$if($ne(%_nonlatinalbum%,), %_nonlatinalbum%,)
+
+$if($ne(%_albumcomment%,), %_albumcomment%,)
+
+)
+
+)
+
+
+$set(_discnumber,
+
+$if(
+
+$gt(%totaldiscs%,1),
+
+%discnumber%-,
+
+)
+
+)
+
+
+$set(_discname,
+
+$if(
+
+$gt(%totaldiscs%,1),
+
+$if($ne(%discsubtitle%,), %discsubtitle%
+
+,
+
+$if($ne(%_nonlatinalbum%,),%_nonlatinalbum%,)
+
+$if($ne(%_albumcomment%,),%_albumcomment% - ,)
+
+),$if($ne(%_nonlatinalbum%,),%_nonlatinalbum%,)
+
+$if($ne(%_albumcomment%,),%_albumcomment% - ,)
+
+)
+
+)
+
+
+$set(_vardiscname,
+
+$if(
+
+$gt(%totaldiscs%,1),
+
+$if($ne(%discsubtitle%,), - %discsubtitle%,
+
+$if($ne(%_nonlatinalbum%,), - %_nonlatinalbum%,)
+
+$if($ne(%_albumcomment%,), - %_albumcomment%,)
+
+),$if($ne(%_nonlatinalbum%,), - %_nonlatinalbum%,)
+
+$if($ne(%_albumcomment%,), - %_albumcomment%,)
+
+)
+)
+
+$noop(_________________________________________________)
+
+
+$noop(If there is no track = If %album% = [non-album tracks] OR
+%tracknumber% = 0 OR %tracknumber% = [Nothing] -> _notrack = 1)
+
+$noop(If _notrack = 1 -> _tracknumber = 0)
+
+$noop(If _notrack = 0 -> _tracknumber = %tracknumber% with no 0 digit at left)
+
+
+$set(_notrack,$if($if2($eq(%album%,[non-album
+tracks]),$eq(%tracknumber%,0),$eq(%tracknumber%,)),1,0))
+
+$noop($set(_tracknumber,$if($eq(%_notrack%,0),$num(%tracknumber%,2),0)))
+
+
+$set(_tracknumber,$if($eq(%_notrack%,0),$if($gt(%totaldiscs%,1),%discnumber%-)$if($gt(%tracknumber%,99),$num(%tracknumber%,3),$num(%tracknumber%,2)),0))
+
+
+$noop(_________________________________________________)
+
+
+$noop(In the Comments, use "NonLatinTitleInEnglish=" to write the
+English translation of a title name typed with non-latin characters.)
+
+$noop(Use "NonLatinTitleInLatin=" to write with latin characters an
+album name typed with non-latin characters.)
+
+$noop("NonLatinTitleInEnglish=" has priority over "NonLatinTitleInLatin=".)
+
+
+$set(_nonlatintitleinenglish,NonLatinTitleInEnglish=)
+
+$set(_nonlatintitleinlatin,NonLatinTitleInLatin=)
+
+$set(_nonlatintitle,$rsearch(%comment:%,%_nonlatintitleinenglish%[^\(\)]+))
+
+$if($eq(%_nonlatintitle%,),$set(_nonlatintitle,$rsearch(%comment:%,%_nonlatintitleinlatin%[^\(\)]+)),)
+
+$set(_nonlatintitle,$rsearch(%_nonlatintitle%,[^%_commentdelimiter%]+%_commentdelimiter%))
+
+$set(_nonlatintitle,$rreplace(%_nonlatintitle%,^%_nonlatintitleinenglish%{1},))
+
+$set(_nonlatintitle,$rreplace(%_nonlatintitle%,^%_nonlatintitleinlatin%{1},))
+
+$if($eq($right(%_nonlatintitle%,1),%_commentdelimiter%),$set(_nonlatintitle,$trim(%_nonlatintitle%,%_commentdelimiter%)),)
+
+$if($eq($right(%_nonlatintitle%,1),%_musicbrainzreplacementforwindowsforbiddencharacters%),$set(_nonlatintitle,$trim(%_nonlatintitle%,%_musicbrainzreplacementforwindowsforbiddencharacters%)),)
+
+
+$noop(_________________________________________________)
+
+
+$noop(In the Comments, use "TitleCommentInEnglish=" to write to write
+a comment on the title.)
+
+
+$set(_titlecommentinenglish,TitleCommentInEnglish=)
+
+$set(_titlecomment,$rsearch(%comment:%,%_titlecommentinenglish%[^\(\)]+))
+
+$set(_titlecomment,$rsearch(%_titlecomment%,[^%_commentdelimiter%]+%_commentdelimiter%))
+
+$set(_titlecomment,$rreplace(%_titlecomment%,^%_titlecommentinenglish%{1},))
+
+$if($eq($right(%_titlecomment%,1),%_commentdelimiter%),$set(_titlecomment,$trim(%_titlecomment%,%_commentdelimiter%)),)
+
+$if($eq($right(%_titlecomment%,1),%_musicbrainzreplacementforwindowsforbiddencharacters%),$set(_titlecomment,$trim(%_titlecomment%,%_musicbrainzreplacementforwindowsforbiddencharacters%)),)
+
+
+$noop(_________________________________________________)
+
+
+$noop(Integrates the content of _nonlatintitle and _titlecomment in _title)
+
+
+$set(_title,%title%$if($ne(%_nonlatintitle%,),
+\(%_nonlatintitle%\),)$if($ne(%_titlecomment%,),
+\(%_titlecomment%\),))
+
+
+$noop(_________________________________________________)
+
+
+$noop(In the Comments, use "FirstPartOfTheName=" to write something on
+the left, in the first position)
+
+
+$set(_firstpartofthename,FirstPartOfTheName=)
+
+$set(_filenameprefix,$rsearch(%comment:%,%_firstpartofthename%[^\(\)]+))
+
+$set(_filenameprefix,$rsearch(%_filenameprefix%,[^%_commentdelimiter%]+%_commentdelimiter%))
+
+$set(_filenameprefix,$rreplace(%_filenameprefix%,^%_firstpartofthename%{1},))
+
+$if($eq($right(%_filenameprefix%,1),%_commentdelimiter%),$set(_filenameprefix,$trim(%_filenameprefix%,%_commentdelimiter%)),)
+
+$if($eq($right(%_filenameprefix%,1),%_musicbrainzreplacementforwindowsforbiddencharacters%),$set(_filenameprefix,$trim(%_filenameprefix%,%_musicbrainzreplacementforwindowsforbiddencharacters%)),)
+
+
+$noop(_________________________________________________)
+
+
+$noop(In the Comments, use "LastPartOfTheName=" to write something on
+the right, in the last position)
+
+
+$set(_lastpartofthename,LastPartOfTheName=)
+
+$set(_filenamesuffix,$rsearch(%comment:%,%_lastpartofthename%[^\(\)]+))
+
+$set(_filenamesuffix,$rsearch(%_filenamesuffix%,[^%_commentdelimiter%]+%_commentdelimiter%))
+
+$set(_filenamesuffix,$rreplace(%_filenamesuffix%,^%_lastpartofthename%{1},))
+
+$if($eq($right(%_filenamesuffix%,1),%_commentdelimiter%),$set(_filenamesuffix,$trim(%_filenamesuffix%,%_commentdelimiter%)),)
+
+$if($eq($right(%_filenamesuffix%,1),%_musicbrainzreplacementforwindowsforbiddencharacters%),$set(_filenamesuffix,$trim(%_filenamesuffix%,%_musicbrainzreplacementforwindowsforbiddencharacters%)),)
+
+
+$noop(_________________________________________________)
+
+
+$noop(Windows limits file fullname to 255 characters.)
+
+$noop(So We set a limit for each part to 85 characters.)
+
+$noop(If the length of a part is longer than than, we truncate with "[…]".)
+
+
+$set(_maximumlength,85)
+
+$set(_toolongmarker,[…])
+
+$if($gte($len(%_artist%),%_maximumlength%),$set(_artist,$firstwords(%_artist%,%_maximumlength%)%_toolongmarker%),)
+
+$if($gte($len(%_album%),%_maximumlength%),$set(_album,$firstwords(%_album%,%_maximumlength%)%_toolongmarker%),)
+
+$if($gte($len(%_title%),%_maximumlength%),$set(_title,$firstwords(%_title%,%_maximumlength%)%_toolongmarker%),)
+
+
+$noop(_________________________________________________)
+
+$noop(Output Track Name)
+
+$noop(_________________________________________________)
+
+
+$set(_trackname,$if($ne(%_filenameprefix%,),%_filenameprefix% -
+,)$if($eq(%compilation%,1),%_albumartist%////%_date%
+%_album%////%_tracknumber%%_vardiscname% - %_artist% - 
+%_title%,$if(%albumartistsort%,%albumartistsort%,%artistsort%)////%_date%
+%_album%////%_tracknumber% - 
+%_discname% %_title%)$if($ne(%_filenamesuffix%,), - 
+%_filenamesuffix%,))
+
+
+
+$noop(_________________________________________________)
+
+
+$noop(Replaces Windows forbidden characters by Unicode equivalent ? ?
+: * ? ” ‹ › |)
+
+$noop(On Windows, MusicBrainz just deletes slash and anti-slash before
+everything by security.)
+
+
+$set(_windowsforbiddencharacterantislash,\\\\)
+
+$set(_windowsforbiddencharacterfolderslash,////)
+
+$set(_windowsforbiddencharacterslash,/)
+
+$set(_windowsforbiddencharactercolon,:)
+
+$set(_windowsforbiddencharacterasterisk,*)
+
+$set(_windowsforbiddencharacterquestionmark,?)
+
+$set(_windowsforbiddencharacterquotationmark,")
+
+$set(_windowsforbiddencharacterlessthansign,<)
+
+$set(_windowsforbiddencharactergreaterthansign,>)
+
+$set(_windowsforbiddencharacterverticalbar,|)
+
+
+$set(_windowsunicodeequivalentantislash,?)
+
+$set(_windowsunicodeequivalentfolderslash,/)
+
+$set(_windowsunicodeequivalentslash,?)
+
+$set(_windowsunicodeequivalentcolon,:)
+
+$set(_windowsunicodeequivalentasterisk,*)
+
+$set(_windowsunicodeequivalentquestionmark,?)
+
+$set(_windowsunicodeequivalentquotationmark,”)
+
+$set(_windowsunicodeequivalentlessthansign,‹)
+
+$set(_windowsunicodeequivalentgreaterthansign,›)
+
+$set(_windowsunicodeequivalentverticalbar,|)
+
+
+$set(_trackname,$rreplace(%_trackname%,[%_windowsforbiddencharacterantislash%]+,%_windowsunicodeequivalentantislash%))
+
+$noop($set(_trackname,$rreplace(%_trackname%,[%_windowsforbiddencharacterslash%]+,%_windowsunicodeequivalentslash%)))
+
+$set(_trackname,$rreplace(%_trackname%,[%_windowsforbiddencharacterfolderslash%]+,%_windowsunicodeequivalentfolderslash%))
+
+$set(_trackname,$rreplace(%_trackname%,[%_windowsforbiddencharactercolon%]+,%_windowsunicodeequivalentcolon%))
+
+$set(_trackname,$rreplace(%_trackname%,[%_windowsforbiddencharacterasterisk%]+,%_windowsunicodeequivalentasterisk%))
+
+$noop($set(_trackname,$rreplace(%_trackname%,[%_windowsforbiddencharacterquestionmark%]+,%_windowsunicodeequivalentquestionmark%)))
+
+$set(_trackname,$rreplace(%_trackname%,[%_windowsforbiddencharacterquotationmark%]+,%_windowsunicodeequivalentquotationmark%))
+
+$set(_trackname,$rreplace(%_trackname%,[%_windowsforbiddencharacterlessthansign%]+,%_windowsunicodeequivalentlessthansign%))
+
+$set(_trackname,$rreplace(%_trackname%,[%_windowsforbiddencharactergreaterthansign%]+,%_windowsunicodeequivalentgreaterthansign%))
+
+$set(_trackname,$rreplace(%_trackname%,[%_windowsforbiddencharacterverticalbar%]+,%_windowsunicodeequivalentverticalbar%))
+
+
+$noop(_________________________________________________)
+
+
+$noop(UNIX hides files beginning by "." and MusicBrainz replaces it by
+"_" so we replace it by "·")
+
+$noop(Replaces "..." by "…" too)
+
+
+$set(_unixforbiddencharacterellipsis,...)
+
+$set(_unixforbiddencharacterfullstop,.)
+
+
+$set(_unixunicodeequivalentellipsis,…)
+
+$set(_unixunicodeequivalentfullstop,·)
+
+
+$set(_trackname,$if($eq($left(%_trackname%,3),%_unixforbiddencharacterellipsis%),$rreplace(%_trackname%,^%_unixforbiddencharacterfullstop%{3},%_unixunicodeequivalentellipsis%),%_trackname%))
+
+$set(_trackname,$if($eq($left(%_trackname%,1),%_unixforbiddencharacterfullstop%),$rreplace(%_trackname%,^%_unixforbiddencharacterfullstop%{1},%_unixunicodeequivalentfullstop%),%_trackname%))
+
+
+$noop(_________________________________________________)
+
+
+$noop(MusicBrainz replaces these forbidden characters by underscore _,
+we delete them)
+
+
+$noop($set(_trackname,$rreplace(%_trackname%,[%_musicbrainzreplacementforwindowsforbiddencharacters%]+,)))
+
+
+$noop(_________________________________________________)
+
+
+$noop(Replaces other characters by space: Tab, Carriage return)
+
+
+$set(_windowsforbiddencharactertabulator,\\t)
+
+$set(_windowsforbiddencharactercarriagereturn,\\n)
+
+
+$set(_trackname,$rreplace(%_trackname%,[%_windowsforbiddencharactertabulator%]+,))
+
+$set(_trackname,$rreplace(%_trackname%,[%_windowsforbiddencharactercarriagereturn%]+,))
+
+
+$noop(_________________________________________________)
+
+
+$noop(Replaces non-breaking space and other spaces by a simple space)
+
+
+$set(_characterforspace,\\s)
+
+$set(_trackname,$rreplace(%_trackname%,[%_characterforspace%]+, ))
+
+
+$noop(_________________________________________________)
+
+
+%_trackname%
