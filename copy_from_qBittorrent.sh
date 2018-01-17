@@ -17,9 +17,9 @@ torrentHash="$9"    ## "%I"
 ## Todo: add tag support when implemented in qBittorrent
 
 ## CSV format for logfile
-## Date, Name, Hash, Category, Size, Imported(1/0)
+## Date, Name, Hash, Category, Size, Imported(true/false)
 
-output="$(date +%c), '$name', '$torrentHash', '$category', '$size',"
+output="$(date +%c), '$name', $torrentHash, '$category', $size, "
 
 if [[ "$category" == "do not import" ]]; then
     copy=false
