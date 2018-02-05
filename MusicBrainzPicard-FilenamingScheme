@@ -443,6 +443,14 @@ $if($gte($len(%_title%),%_maximumlength%),$set(_title,$firstwords(%_title%,%_max
 
 $noop(_________________________________________________)
 
+
+$noop(Add catalog number in brackets, e.g. {IL2034} at the end of album directory)
+
+$set(_catalognumber,$if(%catalognumber%,{%catalognumber%},))
+
+
+$noop(_________________________________________________)
+
 $noop(Output Track Name)
 
 $noop(_________________________________________________)
@@ -450,12 +458,11 @@ $noop(_________________________________________________)
 
 $set(_trackname,$if($ne(%_filenameprefix%,),%_filenameprefix% -
 ,)$if($eq(%compilation%,1),%_albumartist%////%_date%
-%_album%////%_tracknumber%%_vardiscname% - %_artist% - 
+%_album% %_catalognumber%////%_tracknumber%%_vardiscname% - %_artist% - 
 %_title%,$if(%albumartistsort%,%albumartistsort%,%artistsort%)////%_date%
-%_album%////%_tracknumber% - 
+%_album% %_catalognumber%////%_tracknumber% - 
 %_discname% %_title%)$if($ne(%_filenamesuffix%,), - 
 %_filenamesuffix%,))
-
 
 
 $noop(_________________________________________________)
