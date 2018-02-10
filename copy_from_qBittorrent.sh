@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 importFolder="/home/user/Music/Import"
 
