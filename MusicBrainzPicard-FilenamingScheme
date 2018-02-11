@@ -262,9 +262,7 @@ $if(
 
 $gt(%totaldiscs%,1),
 
-$if($ne(%discsubtitle%,), %discsubtitle%
-
-,
+$if($ne(%discsubtitle%,), %discsubtitle% - ,
 
 $if($ne(%_nonlatinalbum%,),%_nonlatinalbum%,)
 
