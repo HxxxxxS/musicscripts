@@ -49,19 +49,19 @@ if [[ "$tags" == *"public"* ]]; then
     public=true
 elif [[ "$tracker" == *"t-ru.org"* ]]; then
     public=true
-elif [[ "$tracker" == *"openbittorrent.com"* ]]
+elif [[ "$tracker" == *"openbittorrent.com"* ]]; then
     public=true
-elif [[ "$tracker" == *"rarbg.com"* ]]
+elif [[ "$tracker" == *"rarbg.com"* ]]; then
     public=true
-elif [[ "$tracker" == *"zer0day.to"* ]]
+elif [[ "$tracker" == *"zer0day.to"* ]]; then
     public=true
-elif [[ "$tracker" == *"leechers-paradise.org"* ]]
+elif [[ "$tracker" == *"leechers-paradise.org"* ]]; then
     public=true
-elif [[ "$tracker" == *"coppersurfer.tk"* ]]
+elif [[ "$tracker" == *"coppersurfer.tk"* ]]; then
     public=true
-elif [[ "$tracker" == *"1337x.org"* ]]
+elif [[ "$tracker" == *"1337x.org"* ]]; then
     public=true
-elif [[ "$tracker" == *"piratebay"* ]]
+elif [[ "$tracker" == *"piratebay"* ]]; then
     public=true
 fi
 
