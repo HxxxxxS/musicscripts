@@ -1,0 +1,105 @@
+directory: /music/
+library: /music/.beet/import.db
+threaded: yes
+bell: yes
+
+plugins: [
+  ### autotagger extentions ###
+  # chroma,
+  discogs,
+  ### metadata plugins ###
+  acousticbrainz,
+  # embedart,
+  fetchart,
+  ftintitle,
+  # mbsync,
+  # lyrics,
+  # scrub,
+  ### path format plugins ###
+  duplicates,
+  # bucket,
+  inline,
+  the,
+  ### interoperability plugins ###
+  # badfiles,
+  ### misc plugins ###
+  missing,
+  info,
+  # web,
+  # ihate,
+  # filefilter
+  ### other plugins ###
+  # embyupdate, 
+]
+
+import:
+    move: no
+    copy: yes
+    rename: yes
+    write: yes
+    #autotag: no
+    incremental: yes
+    #incremental_skip_later: yes
+    resume: yes
+    #duplicate_action: ask
+    #none_rec_action: ask
+    duplicate_action: skip
+    none_rec_action: skip
+    log: /music/.beet/import.log
+
+match:
+    strong_rec_thresh: 0.05
+
+art_filename: cover
+per_disc_numbering: yes
+
+paths:
+    default: sorted/%the{$albumartist}/$c_original_year - $album$aunique/$trackinfo$title
+    singleton: singles/$artist - $c_original_year - $title
+    comp: sorted/Various Artists/$c_original_year - $album$aunique/$trackinfo$title
+    albumtype:soundtrack: soundtracks/$c_original_year - $album$aunique/$track $title
+
+item_fields:
+    c_original_year: original_year if original_year != None and original_year != 0 else year if year != None and year != 0 else ''
+    multidisc: 1 if disctotal > 1 else 0
+    aunique: |
+                c_original_year = original_year if original_year != None and original_year != 0 else year if year != None and year != 0 else ''
+                s = ' '
+                if albumdisambig != None and albumdisambig.strip() != '':
+                  s += u'(%02s)' % albumdisambig
+                if c_original_year != year and c_original_year != 0 and str(c_original_year).strip() != '':
+                  s += u'[%02s]' % year
+                if format != None and format.strip() != '':
+                  s += u'(%02s)' % format
+                if catalognum != None and str(catalognum).strip() != '' and catalognum != '[none]':
+                  s += u'{%02s}' % catalognum
+                elif label != None and label.strip() != '' and label != '[none]' and label != '[no label]':
+                  s += u'{%02s}' % label
+
+                if s.strip() != '':
+                  return s
+    trackinfo: |
+                s = ''
+                if disctotal > 1:
+                  s += '%02d' % disc + '-'
+                s += '%02d' % track + ' - '
+                if disctitle != None and disctitle.strip() != '' and disctitle != disc:
+                  s += disctitle + ' - '
+                return s
+
+duplicates:
+  #move: /music/dupes/
+  tag: beetdupe=1
+  tiebreak: 
+    items: [bitrate]
+  #album: yes
+  format: '$artist - $album - $bitrate $format'
+  count: yes
+
+discogs:
+  user_token: <snip>
+
+fetchart:
+  sources: filesystem coverart amazon albumart fanarttv wikipedia amazon google
+  google_key: <snip>
+  fanarttv_key: <snip>
