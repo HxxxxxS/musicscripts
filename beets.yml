@@ -1,5 +1,5 @@
-directory: /music/
-library: /music/.beet/import.db
+directory: /music
+library: /music/.beet/library.db
 threaded: yes
 bell: yes
 
@@ -37,14 +37,14 @@ import:
     copy: yes
     rename: yes
     write: yes
-    #autotag: no
+    autotag: yes  
     incremental: yes
     #incremental_skip_later: yes
     resume: yes
-    #duplicate_action: ask
-    #none_rec_action: ask
-    duplicate_action: skip
-    none_rec_action: skip
+    duplicate_action: ask
+    none_rec_action: ask
+    #duplicate_action: skip
+    #none_rec_action: skip
     log: /music/.beet/import.log
 
 match:
@@ -54,10 +54,11 @@ art_filename: cover
 per_disc_numbering: yes
 
 paths:
-    default: sorted/%the{$albumartist}/$c_original_year - $album$aunique/$trackinfo$title
-    singleton: singles/$artist - $c_original_year - $title
-    comp: sorted/Various Artists/$c_original_year - $album$aunique/$trackinfo$title
-    albumtype:soundtrack: soundtracks/$c_original_year - $album$aunique/$track $title
+    roughguide:true: _roughguide/%if{$c_original_year,$c_original_year - }$album$aunique/$trackinfo$title
+    default: sorted/%the{$albumartist}/%if{$c_original_year,$c_original_year - }$album$aunique/$trackinfo$title
+    singleton: singles/$artist - %if{$c_original_year,$c_original_year - }$title
+    comp: sorted/Various Artists/%if{$c_original_year,$c_original_year - }$album$aunique/$trackinfo$title
+    albumtype:soundtrack: _soundtracks/%if{$c_original_year,$c_original_year - }$album$aunique/$trackinfo$title
 
 item_fields:
     c_original_year: original_year if original_year != None and original_year != 0 else year if year != None and year != 0 else ''
@@ -72,10 +73,11 @@ item_fields:
                 if format != None and format.strip() != '':
                   s += u'(%02s)' % format
                 if catalognum != None and str(catalognum).strip() != '' and catalognum != '[none]':
-                  s += u'{%02s}' % catalognum
+                  if catalognum.replace(' ', '').lower().find('self-released') == -1:
+                    s += u'{%02s}' % catalognum
                 elif label != None and label.strip() != '' and label != '[none]' and label != '[no label]':
-                  s += u'{%02s}' % label
-
+                  if catalognum.replace(' ', '').lower().find('notonlabel') == -1:
+                    s += u'{%02s}' % label
                 if s.strip() != '':
                   return s
     trackinfo: |
@@ -83,9 +85,12 @@ item_fields:
                 if disctotal > 1:
                   s += '%02d' % disc + '-'
                 s += '%02d' % track + ' - '
-                if disctitle != None and disctitle.strip() != '' and disctitle != disc:
+                if disctitle != None and disctitle.strip() != '' and str(disctitle.strip()) != str(disc):
                   s += disctitle + ' - '
                 return s
+    roughguide: |
+                if album.replace(' ', '').lower().find('roughguide') > -1 and albumartist == 'Various Artists':
+                  return true
 
 duplicates:
   #move: /music/dupes/
@@ -97,9 +102,9 @@ duplicates:
   count: yes
 
 discogs:
-  user_token: <snip>
+  user_token: x
 
 fetchart:
   sources: filesystem coverart amazon albumart fanarttv wikipedia amazon google
-  google_key: <snip>
-  fanarttv_key: <snip>
+  google_key: x
+  fanarttv_key: x
