@@ -1,8 +1,8 @@
 #!/bin/bash
 
-importFolder="/home/user/Music/Import"
+## /path/to/copy_from_qBittorrent.sh "%N" "%L" "%F" "%R" "%D" "%C" "%Z" "%T" "%I" "%G"
 
-logFile="/home/user/Downloads/scripts/logs/$(date +%Y-%m)_downloads.csv"
+logFile="/path/to/logs/$(date +%Y-%m)_downloads.csv"
 
                     ## Parameters for qBittorrent
 name="$1"           ## "%N"
@@ -21,29 +21,15 @@ tags="$10"          ## "%G"
 
 output="$(date +%c), '$name', $torrentHash, '$category', $size, "
 
-if [[ "$category" == "do not import" ]]; then
-    music=false
-elif [[ "$category" == "old"* ]]; then
-    music=false
-elif [[ "$category" == "redacted" ]]; then
-    music=true
-elif [[ "$category" == "musikk" ]]; then
-    music=true
-elif [[ "$tracker" == *"flacsfor.me"* ]]; then
-    music=true
-elif [[ "$tracker" == *"apollo"* ]]; then
-    music=true
-else
-    music=false
-fi
+series=false
+film=false
+public=false
 
 if [[ "$category" == "serier" ]]; then
     series=true
 elif [[ "$category" == "film" ]]; then
     film=true
 fi
-
-public=false
 
 if [[ "$tags" == *"public"* ]]; then
     public=true
@@ -65,11 +51,27 @@ elif [[ "$tracker" == *"piratebay"* ]]; then
     public=true
 fi
 
+if [[ "$category" == "musikk" ]]; then
+    music=true
+elif [[ "$category" == "do not import" ]]; then
+    music=false
+elif [[ "$category" == "old"* ]]; then
+    music=false
+elif [[ "$tracker" == *"flacsfor.me"* ]]; then
+    music=true
+    public=false
+elif [[ "$tracker" == *"home.opsfet.ch"* ]]; then
+    music=true
+    public=false
+else
+    music=false
+fi
+
 output+=$tags
 
-if [[ $public ]]; then
+if [ $public ]; then
     if [ $music ]; then
-        mv "$contentPath/" "$importFolder/"
+        /usr/bin/beet -v --config=~/.config/beets/downloads.yaml im --flat "$contentPath"
     elif [ $series ]; then
         mv "$contentPath/" "~/Series/"
     elif [[ $film ]]; then
@@ -77,7 +79,7 @@ if [[ $public ]]; then
     fi
 else
     if [ $music ]; then
-        cp "$contentPath/" "$importFolder/" -r
+        /usr/bin/beet -v --config=~/.config/beets/downloads.yaml im --flat "$contentPath"
     elif [ $series ]; then
         cp "$contentPath/" "~/Series/" -r
     elif [[ $film ]]; then
