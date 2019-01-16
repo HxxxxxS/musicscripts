@@ -90,7 +90,7 @@ item_fields:
                 return s
     roughguide: |
                 if album.replace(' ', '').lower().find('roughguide') > -1 and albumartist == 'Various Artists':
-                  return true
+                  return True
 
 duplicates:
   #move: /music/dupes/
