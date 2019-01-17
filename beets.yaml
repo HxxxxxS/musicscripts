@@ -51,6 +51,13 @@ import:
 match:
     strong_rec_thresh: 0.05
 
+replace:
+    # '[<>:"\?\*\|]': _ # This line MUST be uncommented if you use Windows or plan on using your library on Windows
+    '^\.': ''
+    '[\x00-\x1f]': _
+    '\s+$': ''
+    '^\s+': ''
+
 art_filename: cover
 per_disc_numbering: yes
 
