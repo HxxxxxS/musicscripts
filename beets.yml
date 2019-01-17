@@ -4,32 +4,33 @@ threaded: yes
 bell: yes
 
 plugins: [
-  ### autotagger extentions ###
-  # chroma,
-  discogs,
-  ### metadata plugins ###
-  acousticbrainz,
-  # embedart,
-  fetchart,
-  ftintitle,
-  # mbsync,
-  # lyrics,
-  # scrub,
-  ### path format plugins ###
-  duplicates,
-  # bucket,
-  inline,
-  the,
-  ### interoperability plugins ###
-  # badfiles,
-  ### misc plugins ###
-  missing,
-  info,
-  # web,
-  # ihate,
-  # filefilter
-  ### other plugins ###
-  # embyupdate, 
+    ### autotagger extentions ###
+    # chroma,
+    discogs,
+    ### metadata plugins ###
+    acousticbrainz,
+    # embedart,
+    fetchart,
+    ftintitle,
+    # mbsync,
+    # lyrics,
+    # scrub,
+    ### path format plugins ###
+    duplicates,
+    # bucket,
+    inline,
+    the,
+    ### interoperability plugins ###
+    # badfiles,
+    ### misc plugins ###
+    missing,
+    info,
+    convert,
+    # web,
+    # ihate,
+    # filefilter,
+    ### other plugins ###
+    # embyupdate,
 ]
 
 import:
@@ -93,18 +94,18 @@ item_fields:
                   return True
 
 duplicates:
-  #move: /music/dupes/
-  tag: beetdupe=1
-  tiebreak: 
-    items: [bitrate]
-  #album: yes
-  format: '$artist - $album - $bitrate $format'
-  count: yes
+    tag: beetdupe=1
+    tiebreak:
+        items: [bitrate]
+    #album: yes
+    #format: '$artist - $album - $bitrate $format'
+    format: '$path'
+    count: yes
 
 discogs:
-  user_token: x
+    user_token: x
 
 fetchart:
-  sources: filesystem coverart amazon albumart fanarttv wikipedia amazon google
-  google_key: x
-  fanarttv_key: x
+    sources: filesystem coverart amazon albumart fanarttv wikipedia amazon google
+    google_key: x
+    fanarttv_key: x
