@@ -102,6 +102,15 @@ duplicates:
     format: '$path'
     count: yes
 
+convert:
+    dest: /music/lofi/
+    never_convert_lossy_files: yes
+    format: ogg
+    paths:
+        default: %the{$albumartist} - %if{$c_original_year,$c_original_year - }$album%if{$c_original_year!=$year, [$year]}%if{$catalognum, $catalognum,%if{$label, $label}}/$trackinfo$title
+        singleton: $artist - %if{$c_original_year,$c_original_year - }$title
+        comp: Various Artists - %if{$c_original_year,$c_original_year - }$album%if{$c_original_year!=$year, [$year]}%if{$catalognum, $catalognum,%if{$label, $label}}/$trackinfo$title
+
 discogs:
     user_token: x
 
