@@ -75,26 +75,26 @@ item_fields:
                 c_original_year = original_year if original_year != None and original_year != 0 else year if year != None and year != 0 else ''
                 s = ' '
                 if albumdisambig != None and albumdisambig.strip() != '':
-                  s += u'(%02s)' % albumdisambig
+                    s += u'(%02s)' % albumdisambig
                 if c_original_year != year and c_original_year != 0 and str(c_original_year).strip() != '':
-                  s += u'[%02s]' % year
+                    s += u'[%02s]' % year
                 if format != None and format.strip() != '':
-                  s += u'(%02s)' % format
+                    s += u'(%02s)' % format
                 if catalognum != None and str(catalognum).strip() != '' and catalognum != '[none]':
-                  if catalognum.replace(' ', '').lower().find('self-released') == -1:
-                    s += u'{%02s}' % catalognum
+                    if catalognum.replace(' ', '').lower().find('self-released') == -1:
+                        s += u'{%02s}' % catalognum
                 elif label != None and label.strip() != '' and label != '[none]' and label != '[no label]':
-                  if catalognum.replace(' ', '').lower().find('notonlabel') == -1:
-                    s += u'{%02s}' % label
+                    if catalognum.replace(' ', '').lower().find('notonlabel') == -1:
+                        s += u'{%02s}' % label
                 if s.strip() != '':
-                  return s
+                    return s
     trackinfo: |
                 s = ''
                 if disctotal > 1:
-                  s += '%02d' % disc + '-'
+                    s += '%02d' % disc + '-'
                 s += '%02d' % track + ' - '
                 if disctitle != None and disctitle.strip() != '' and str(disctitle.strip()) != str(disc):
-                  s += disctitle + ' - '
+                    s += disctitle + ' - '
                 return s
     roughguide: |
                 if album.replace(' ', '').lower().find('roughguide') > -1 and albumartist == 'Various Artists':
