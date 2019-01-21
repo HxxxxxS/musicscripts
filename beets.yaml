@@ -63,9 +63,9 @@ per_disc_numbering: yes
 
 paths:
     roughguide:true: _roughguide/%if{$c_original_year,$c_original_year - }$album$aunique/$trackinfo$title
-    default: sorted/%the{$albumartist}/%if{$c_original_year,$c_original_year - }$album$aunique/$trackinfo$title
+    default: sorted/%if{$spacedname,$albumartist,%the{$albumartist}}/%if{$c_original_year,$c_original_year - }$album$aunique/$trackinfo$title
     singleton: singles/$artist - %if{$c_original_year,$c_original_year - }$title
-    comp: sorted/Various Artists/%if{$c_original_year,$c_original_year - }$album$aunique/$trackinfo$title
+    comp: sorted/Various Artists/%if{$c_original_year,$c_original_year - }$album$aunique/$trackinfo$artist - $title
     albumtype:soundtrack: _soundtracks/%if{$c_original_year,$c_original_year - }$album$aunique/$trackinfo$title
 
 item_fields:
@@ -98,7 +98,10 @@ item_fields:
                 return s
     roughguide: |
                 if album.replace(' ', '').lower().find('roughguide') > -1 and albumartist == 'Various Artists':
-                  return True
+                    return True
+    spacedname: |
+                if len(albumartist.split(' ')) >= len(albumartist)/2:
+                    return True
 
 duplicates:
     tag: beetdupe=1
@@ -114,9 +117,9 @@ convert:
     never_convert_lossy_files: yes
     format: ogg
     paths:
-        default: %the{$albumartist} - %if{$c_original_year,$c_original_year - }$album%if{$c_original_year!=$year, [$year]}%if{$catalognum, $catalognum,%if{$label, $label}}/$trackinfo$title
+        default: %if{$spacedname,$albumartist,%the{$albumartist}} - %if{$c_original_year,$c_original_year - }$album%if{$catalognum, ($catalognum),%if{$label, ($label)}}/$trackinfo$title
         singleton: $artist - %if{$c_original_year,$c_original_year - }$title
-        comp: Various Artists - %if{$c_original_year,$c_original_year - }$album%if{$c_original_year!=$year, [$year]}%if{$catalognum, $catalognum,%if{$label, $label}}/$trackinfo$title
+        comp: Various Artists - %if{$c_original_year,$c_original_year - }$album%if{$catalognum, $catalognum,%if{$label, $label}}/$trackinfo$artist - $title
 
 discogs:
     user_token: x
