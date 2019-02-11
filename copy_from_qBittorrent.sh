@@ -31,36 +31,36 @@ elif [[ "$category" == "film" ]]; then
     film=true
 fi
 
-if [[ "$tags" == *"public"* ]]; then
+if [[ "$tags" = *"public"* ]]; then
     public=true
-elif [[ "$tracker" == *"t-ru.org"* ]]; then
+elif [[ "$tracker" = *"t-ru.org"* ]]; then
     public=true
-elif [[ "$tracker" == *"openbittorrent.com"* ]]; then
+elif [[ "$tracker" = *"openbittorrent.com"* ]]; then
     public=true
-elif [[ "$tracker" == *"rarbg.com"* ]]; then
+elif [[ "$tracker" = *"rarbg.com"* ]]; then
     public=true
-elif [[ "$tracker" == *"zer0day.to"* ]]; then
+elif [[ "$tracker" = *"zer0day.to"* ]]; then
     public=true
-elif [[ "$tracker" == *"leechers-paradise.org"* ]]; then
+elif [[ "$tracker" = *"leechers-paradise.org"* ]]; then
     public=true
-elif [[ "$tracker" == *"coppersurfer.tk"* ]]; then
+elif [[ "$tracker" = *"coppersurfer.tk"* ]]; then
     public=true
-elif [[ "$tracker" == *"1337x.org"* ]]; then
+elif [[ "$tracker" = *"1337x.org"* ]]; then
     public=true
-elif [[ "$tracker" == *"piratebay"* ]]; then
+elif [[ "$tracker" = *"piratebay"* ]]; then
     public=true
 fi
 
-if [[ "$category" == "musikk" ]]; then
+if [[ "$category" = "musikk" ]]; then
     music=true
-elif [[ "$category" == "do not import" ]]; then
+elif [[ "$category" = "do not import" ]]; then
     music=false
-elif [[ "$category" == "old"* ]]; then
+elif [[ "$category" = "old"* ]]; then
     music=false
-elif [[ "$tracker" == *"flacsfor.me"* ]]; then
+elif [[ "$tracker" = *"flacsfor.me"* ]]; then
     music=true
     public=false
-elif [[ "$tracker" == *"home.opsfet.ch"* ]]; then
+elif [[ "$tracker" = *"home.opsfet.ch"* ]]; then
     music=true
     public=false
 else
@@ -69,18 +69,18 @@ fi
 
 output+=$tags
 
-if [ $public ]; then
-    if [ $music ]; then
+if [ "$public" = true ]; then
+    if [ "$music" = true ]; then
         /usr/bin/beet -v --config=~/.config/beets/downloads.yaml im --flat "$contentPath"
-    elif [ $series ]; then
+    elif [ "$series" = true ]; then
         mv "$contentPath/" "~/Series/"
     elif [[ $film ]]; then
         mv "$contentPath/" "~/Videos/"
     fi
 else
-    if [ $music ]; then
+    if [ "$music" = true ]; then
         /usr/bin/beet -v --config=~/.config/beets/downloads.yaml im --flat "$contentPath"
-    elif [ $series ]; then
+    elif [ "$series" = true ]; then
         cp "$contentPath/" "~/Series/" -r
     elif [[ $film ]]; then
         cp "$contentPath/" "~/Videos/" -r
