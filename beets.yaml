@@ -68,14 +68,12 @@ paths:
     comp: sorted/Various Artists/%if{$c_original_year,$c_original_year - }$album$aunique/$trackinfo$artist - $title
     albumtype:soundtrack: _soundtracks/%if{$c_original_year,$c_original_year - }$album$aunique/$trackinfo$title
 
-item_fields:
+album_fields:
     c_original_year: original_year if original_year != None and original_year != 0 else year if year != None and year != 0 else ''
     multidisc: 1 if disctotal > 1 else 0
     aunique: |
         c_original_year = original_year if original_year != None and original_year != 0 else year if year != None and year != 0 else ''
         s = ' '
-        if albumdisambig != None and albumdisambig.strip() != '':
-            s += u'(%02s)' % albumdisambig
         if c_original_year != year and c_original_year != 0 and str(c_original_year).strip() != '':
             s += u'[%02s]' % year
         if format != None and format.strip() != '':
@@ -88,6 +86,14 @@ item_fields:
                 s += u'{%02s}' % label
         if s.strip() != '':
             return s
+    roughguide: |
+        if album.replace(' ', '').lower().find('roughguide') > -1 and albumartist == 'Various Artists':
+            return True
+    spacedname: |
+        if len(albumartist.split(' ')) >= len(albumartist)/2:
+            return True
+
+item_fields:
     trackinfo: |
         s = ''
         if disctotal > 1:
@@ -96,12 +102,6 @@ item_fields:
         if disctitle != None and disctitle.strip() != '' and str(disctitle.strip()) != str(disc):
             s += disctitle + ' - '
         return s
-    roughguide: |
-        if album.replace(' ', '').lower().find('roughguide') > -1 and albumartist == 'Various Artists':
-            return True
-    spacedname: |
-        if len(albumartist.split(' ')) >= len(albumartist)/2:
-            return True
 
 duplicates:
     tag: beetdupe=1
