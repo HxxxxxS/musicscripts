@@ -72,36 +72,36 @@ item_fields:
     c_original_year: original_year if original_year != None and original_year != 0 else year if year != None and year != 0 else ''
     multidisc: 1 if disctotal > 1 else 0
     aunique: |
-                c_original_year = original_year if original_year != None and original_year != 0 else year if year != None and year != 0 else ''
-                s = ' '
-                if albumdisambig != None and albumdisambig.strip() != '':
-                    s += u'(%02s)' % albumdisambig
-                if c_original_year != year and c_original_year != 0 and str(c_original_year).strip() != '':
-                    s += u'[%02s]' % year
-                if format != None and format.strip() != '':
-                    s += u'(%02s)' % format
-                if catalognum != None and str(catalognum).strip() != '' and catalognum != '[none]':
-                    if catalognum.replace(' ', '').lower().find('self-released') == -1:
-                        s += u'{%02s}' % catalognum
-                elif label != None and label.strip() != '' and label != '[none]' and label != '[no label]':
-                    if catalognum.replace(' ', '').lower().find('notonlabel') == -1:
-                        s += u'{%02s}' % label
-                if s.strip() != '':
-                    return s
+        c_original_year = original_year if original_year != None and original_year != 0 else year if year != None and year != 0 else ''
+        s = ' '
+        if albumdisambig != None and albumdisambig.strip() != '':
+            s += u'(%02s)' % albumdisambig
+        if c_original_year != year and c_original_year != 0 and str(c_original_year).strip() != '':
+            s += u'[%02s]' % year
+        if format != None and format.strip() != '':
+            s += u'(%02s)' % format
+        if catalognum != None and str(catalognum).strip() != '' and catalognum != '[none]':
+            if catalognum.replace(' ', '').lower().find('self-released') == -1:
+                s += u'{%02s}' % catalognum
+        elif label != None and label.strip() != '' and label != '[none]' and label != '[no label]':
+            if catalognum.replace(' ', '').lower().find('notonlabel') == -1:
+                s += u'{%02s}' % label
+        if s.strip() != '':
+            return s
     trackinfo: |
-                s = ''
-                if disctotal > 1:
-                    s += '%02d' % disc + '-'
-                s += '%02d' % track + ' - '
-                if disctitle != None and disctitle.strip() != '' and str(disctitle.strip()) != str(disc):
-                    s += disctitle + ' - '
-                return s
+        s = ''
+        if disctotal > 1:
+            s += '%02d' % disc + '-'
+        s += '%02d' % track + ' - '
+        if disctitle != None and disctitle.strip() != '' and str(disctitle.strip()) != str(disc):
+            s += disctitle + ' - '
+        return s
     roughguide: |
-                if album.replace(' ', '').lower().find('roughguide') > -1 and albumartist == 'Various Artists':
-                    return True
+        if album.replace(' ', '').lower().find('roughguide') > -1 and albumartist == 'Various Artists':
+            return True
     spacedname: |
-                if len(albumartist.split(' ')) >= len(albumartist)/2:
-                    return True
+        if len(albumartist.split(' ')) >= len(albumartist)/2:
+            return True
 
 duplicates:
     tag: beetdupe=1
