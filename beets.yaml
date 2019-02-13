@@ -76,8 +76,16 @@ album_fields:
         s = ' '
         if c_original_year != year and c_original_year != 0 and str(c_original_year).strip() != '':
             s += u'[%02s]' % year
-        if format != None and format.strip() != '':
-            s += u'(%02s)' % format
+        f = False
+        for item in items:
+            if f == False:
+                f = item.format
+            else:
+                if f != item.format:
+                    f = 'mixed'
+        if f != False:
+            if str(f).strip() != '':
+                s += u'(%02s)' % f
         if catalognum != None and str(catalognum).strip() != '' and catalognum != '[none]':
             if catalognum.replace(' ', '').lower().find('self-released') == -1:
                 s += u'{%02s}' % catalognum
